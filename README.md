@@ -1,4 +1,4 @@
-# Play it here [PLAY](https://el-impostor-beta.vercel.app/)
+# [CLICK to Start Playing](https://el-impostor-beta.vercel.app/)
 
 # El Impostor (The Impostor) 🕵️‍♂️
 
