@@ -1,3 +1,5 @@
+## Play it here [PLAY](https://el-impostor-beta.vercel.app/)
+
 # El Impostor (The Impostor) 🕵️‍♂️
 
 A modern, mobile-first social deduction game built with React, Vite, and Tailwind CSS. Challenge your friends, find the impostor, and avoid being caught!
