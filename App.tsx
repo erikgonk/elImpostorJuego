@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { 
   Users, 
   Settings, 
@@ -17,7 +17,9 @@ import {
   Fingerprint,
   Ghost,
   Trophy,
-  List
+  List,
+  HelpCircle,
+  X
 } from 'lucide-react';
 
 import { CATEGORIES, MIN_PLAYERS, getCategories } from './constants';
@@ -36,11 +38,15 @@ const App: React.FC = () => {
 
   const [inputName, setInputName] = useState('');
   const [playerNames, setPlayerNames] = useState<string[]>([]);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState(0);
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   // Persistent Scores & Match Count
   const [scores, setScores] = useState<ScoreMap>({});
   const [matchCount, setMatchCount] = useState(0);
   const [showFullLeaderboard, setShowFullLeaderboard] = useState(false);
+  const [showHowToPlay, setShowHowToPlay] = useState(false);
 
   // Game State
   const [gameState, setGameState] = useState<GameState>({
@@ -60,12 +66,38 @@ const App: React.FC = () => {
   const addPlayer = () => {
     if (inputName.trim()) {
       const name = inputName.trim();
+      
+      if (playerNames.includes(name)) {
+        // Clear existing timeout to prevent early dismissal
+        if (errorTimeoutRef.current) {
+          clearTimeout(errorTimeoutRef.current);
+        }
+        
+        setErrorMsg(t('playerExists', language));
+        setErrorKey(prev => prev + 1); // Force re-render/restart animation
+        setInputName('');
+        
+        // Set new timeout
+        errorTimeoutRef.current = setTimeout(() => {
+          setErrorMsg(null);
+          errorTimeoutRef.current = null;
+        }, 3000);
+        return;
+      }
+
       setPlayerNames([...playerNames, name]);
       // Initialize score if new
       if (scores[name] === undefined) {
         setScores(prev => ({ ...prev, [name]: 0 }));
       }
       setInputName('');
+      
+      // Clear error immediately on success
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+        errorTimeoutRef.current = null;
+      }
+      setErrorMsg(null);
     }
   };
 
@@ -186,10 +218,83 @@ const App: React.FC = () => {
 
   // --- RENDERING SUB-SCREENS ---
 
+  const renderHowToPlay = () => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-fade-in">
+      <div className="bg-slate-900 border border-white/10 rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl shadow-violet-900/20 overflow-hidden">
+        
+        {/* Modal Header */}
+        <div className="flex justify-between items-center p-4 border-b border-white/5 bg-slate-800/50">
+          <h2 className="text-lg font-bold text-white flex items-center gap-2">
+            <HelpCircle className="w-5 h-5 text-violet-400" />
+            {t('howToPlayTitle', language)}
+          </h2>
+          <button 
+            onClick={() => setShowHowToPlay(false)}
+            className="text-slate-400 hover:text-white transition-colors p-1"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        {/* Modal Content */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-violet-500/20 text-violet-400 flex items-center justify-center font-bold border border-violet-500/30">1</div>
+            <div>
+              <h3 className="font-bold text-white mb-1">{t('step1Title', language)}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">{t('step1Desc', language)}</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold border border-cyan-500/30">2</div>
+            <div>
+              <h3 className="font-bold text-white mb-1">{t('step2Title', language)}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">{t('step2Desc', language)}</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-rose-500/20 text-rose-500 flex items-center justify-center font-bold border border-rose-500/30">3</div>
+            <div>
+              <h3 className="font-bold text-white mb-1">{t('step3Title', language)}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">{t('step3Desc', language)}</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center font-bold border border-yellow-500/30">4</div>
+            <div>
+              <h3 className="font-bold text-white mb-1">{t('step4Title', language)}</h3>
+              <p className="text-sm text-slate-400 leading-relaxed">{t('step4Desc', language)}</p>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Modal Footer */}
+        <div className="p-4 border-t border-white/5 bg-slate-800/30">
+          <Button fullWidth onClick={() => setShowHowToPlay(false)}>
+            {t('close', language)}
+          </Button>
+        </div>
+
+      </div>
+    </div>
+  );
+
   const renderSetup = () => (
     <div className="flex flex-col h-full py-4">
       {/* Header */}
       <div className="text-center space-y-1 mb-6 flex-shrink-0 relative">
+        <button 
+          onClick={() => setShowHowToPlay(true)}
+          className="absolute top-0 left-0 p-2 text-slate-500 hover:text-white transition-colors"
+          title={t('howToPlay', language)}
+        >
+          <HelpCircle className="w-5 h-5" />
+        </button>
         <button 
           onClick={() => setLanguage(l => l === 'es' ? 'en' : 'es')}
           className="absolute top-0 right-0 p-2 text-xs font-bold text-slate-500 hover:text-white transition-colors"
@@ -230,6 +335,26 @@ const App: React.FC = () => {
               <Plus className="w-6 h-6" />
             </button>
           </div>
+
+          {errorMsg && (
+            <div 
+              key={errorKey}
+              className="mb-3 p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-2 text-rose-400 text-sm animate-[fadeOut_3s_ease-in-out_forwards]"
+            >
+              <style>
+                {`
+                  @keyframes fadeOut {
+                    0% { opacity: 1; }
+                    70% { opacity: 1; }
+                    100% { opacity: 0; }
+                  }
+                `}
+              </style>
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" />
+              <span className="font-medium">{errorMsg}</span>
+            </div>
+          )}
+
           <div className="space-y-2">
             {playerNames.map((name, idx) => (
               <div key={idx} className="flex justify-between items-center p-2.5 bg-white/5 rounded-xl border border-white/5 animate-fade-in">
@@ -298,18 +423,22 @@ const App: React.FC = () => {
       <div className="flex flex-col items-center justify-center h-full relative">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-violet-900/20 via-slate-900 to-slate-900 -z-10"></div>
         
-        <div className="text-center space-y-4 mb-10">
-          <p className="text-slate-400 text-sm uppercase tracking-widest font-light">{t('passDeviceTo', language)}</p>
-          <h2 className="text-4xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] px-4">{player.name}</h2>
-        </div>
-        
-        <div onClick={handleRevealNext} className="cursor-pointer w-48 h-48 bg-slate-800/50 rounded-full flex items-center justify-center mb-12 border border-white/10 shadow-[0_0_30px_rgba(124,58,237,0.2)] animate-pulse hover:scale-105 transition-transform">
-           <Fingerprint className="w-24 h-24 text-violet-500" />
+        <div className="flex-1 flex flex-col items-center justify-center w-full">
+          <div className="text-center space-y-4 mb-10">
+            <p className="text-slate-400 text-sm uppercase tracking-widest font-light">{t('passDeviceTo', language)}</p>
+            <h2 className="text-4xl font-black text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] px-4">{player.name}</h2>
+          </div>
+          
+          <div onClick={handleRevealNext} className="cursor-pointer w-48 h-48 bg-slate-800/50 rounded-full flex items-center justify-center mb-12 border border-white/10 shadow-[0_0_30px_rgba(124,58,237,0.2)] animate-pulse hover:scale-105 transition-transform">
+            <Fingerprint className="w-24 h-24 text-violet-500" />
+          </div>
         </div>
 
-        <Button onClick={handleRevealNext} className="px-10 py-4 text-lg w-full max-w-xs">
-          <Eye className="w-6 h-6" /> {t('seeRole', language)}
-        </Button>
+        <div className="w-full max-w-xs pb-6">
+          <Button onClick={handleRevealNext} fullWidth className="text-lg">
+            <Eye className="w-6 h-6" /> {t('seeRole', language)}
+          </Button>
+        </div>
       </div>
     );
   };
@@ -433,25 +562,25 @@ const App: React.FC = () => {
         <p className="text-rose-400 font-medium text-sm">{t('selectSuspect', language)}</p>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-1 min-h-0 space-y-2">
-        {gameState.players.filter(p => p.isAlive).map(player => (
-          <button
-            key={player.id}
-            onClick={() => handleEliminate(player.id)}
-            className="w-full group relative bg-slate-800/40 backdrop-blur-md p-4 rounded-xl border border-white/5 hover:border-rose-500/50 hover:bg-rose-900/10 transition-all flex items-center justify-between overflow-hidden"
-          >
-            <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 font-bold text-xs border border-white/10 group-hover:bg-rose-500 group-hover:text-white transition-colors">
-                    {player.name.charAt(0)}
-                </div>
-                <span className="font-bold text-base text-slate-200 group-hover:text-white">{player.name}</span>
-            </div>
-            
-            <div className="opacity-0 group-hover:opacity-100 transition-opacity text-rose-500">
-                <Skull className="w-5 h-5" />
-            </div>
-          </button>
-        ))}
+      <div className="flex-1 overflow-y-auto px-1 min-h-0">
+        <div className="grid grid-cols-2 gap-3">
+          {gameState.players.filter(p => p.isAlive).map(player => (
+            <button
+              key={player.id}
+              onClick={() => handleEliminate(player.id)}
+              className="group bg-slate-800/40 border border-white/5 p-4 rounded-2xl flex flex-col items-center gap-2 relative overflow-hidden transition-all hover:bg-rose-900/20 hover:border-rose-500/50 aspect-square justify-center"
+            >
+              <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-slate-300 font-bold text-xl border border-white/10 group-hover:bg-rose-500 group-hover:text-white transition-colors shadow-inner">
+                  {player.name.charAt(0).toUpperCase()}
+              </div>
+              <span className="font-bold text-slate-200 truncate w-full text-center tracking-wide text-sm group-hover:text-white">{player.name}</span>
+              
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-rose-500">
+                  <Skull className="w-4 h-4" />
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -623,6 +752,7 @@ const App: React.FC = () => {
         {gameState.status === 'voting' && renderVoting()}
         {gameState.status === 'round_result' && renderRoundResult()}
         {gameState.status === 'game_over' && renderGameOver()}
+        {showHowToPlay && renderHowToPlay()}
       </div>
     </div>
   );

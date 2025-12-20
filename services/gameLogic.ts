@@ -11,6 +11,7 @@ const shuffleArray = <T>(array: T[]): T[] => {
 };
 
 export const generatePlayers = (names: string[], impostorCount: number): Player[] => {
+  // Create players in order
   const players: Player[] = names.map(name => ({
     id: crypto.randomUUID(),
     name,
@@ -18,19 +19,24 @@ export const generatePlayers = (names: string[], impostorCount: number): Player[
     isAlive: true
   }));
 
-  // 1. Shuffle to randomize who gets which role conceptually
-  let shuffled = shuffleArray(players);
+  // Create an array of indices [0, 1, ... n-1]
+  const indices = Array.from({ length: names.length }, (_, i) => i);
   
-  // 2. Assign impostors to the first N players
-  for (let i = 0; i < impostorCount; i++) {
-    if (shuffled[i]) {
-      shuffled[i].role = 'impostor';
-    }
-  }
+  // Shuffle indices to pick impostors randomly
+  const shuffledIndices = shuffleArray(indices);
+  
+  // Select the first 'impostorCount' indices as impostors
+  const impostorIndices = new Set(shuffledIndices.slice(0, impostorCount));
 
-  // 3. CRITICAL: Shuffle AGAIN so the impostors aren't always at indices 0, 1, 2...
-  // This ensures the first person to pick up the phone isn't always the impostor.
-  return shuffleArray(shuffled);
+  // Assign roles based on selected indices
+  players.forEach((player, index) => {
+    if (impostorIndices.has(index)) {
+      player.role = 'impostor';
+    }
+  });
+
+  // Return players in original order (to preserve turn order)
+  return players;
 };
 
 export const checkWinCondition = (players: Player[]): 'allies' | 'impostors' | null => {
