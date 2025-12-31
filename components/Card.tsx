@@ -4,12 +4,14 @@ interface CardProps {
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
+  style?: React.CSSProperties;
 }
 
-const Card: React.FC<CardProps> = ({ children, className = '', onClick }) => {
+const Card: React.FC<CardProps> = ({ children, className = '', onClick, style }) => {
   return (
     <div 
       onClick={onClick}
+      style={style}
       className={`
         bg-slate-800/40 
         backdrop-blur-xl 

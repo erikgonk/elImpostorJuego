@@ -7,6 +7,16 @@ const CATEGORIES_ES: Category[] = [
     words: ['León', 'Elefante', 'Jirafa', 'Pingüino', 'Delfín', 'Águila', 'Koala', 'Tigre', 'Oso Panda', 'Canguro', 'Lobo', 'Zorro', 'Camello', 'Murciélago', 'Hipopótamo', 'Gorila', 'Serpiente', 'Cocodrilo', 'Búho', 'Gato']
   },
   {
+    id: 'films',
+    name: 'Películas',
+    words: ['Titanic', 'Avatar', 'El Padrino', 'Pulp Fiction', 'Forrest Gump', 'El Rey León', 'Matrix', 'Gladiator', 'Jurassic Park', 'E.T.', 'Star Wars', 'Indiana Jones', 'El Señor de los Anillos', 'Harry Potter', 'Regreso al Futuro', 'Terminator', 'Piratas del Caribe', 'Toy Story', 'Shrek', 'Frozen']
+  },
+  {
+    id: 'spanish_films',
+    name: 'Películas Españolas',
+    words: ['El Laberinto del Fauno', 'Todo sobre mi madre', 'Mar adentro', 'Volver', 'Abre los ojos', 'Tesis', 'El Orfanato', 'REC', 'Celda 211', 'Lo imposible', 'Ocho apellidos vascos', 'El Bola', 'Alatriste', 'Los otros', 'Torrente', 'Campeones', 'Padre no hay más que uno', 'El hoyo', 'La vida es bella', 'Contratiempo']
+  },
+  {
     id: 'cities',
     name: 'Ciudades del Mundo',
     words: ['París', 'Nueva York', 'Tokio', 'Londres', 'Roma', 'Barcelona', 'Sídney', 'El Cairo', 'Río de Janeiro', 'Moscú', 'Dubái', 'Los Ángeles', 'Berlín', 'Toronto', 'Buenos Aires', 'Ciudad de México', 'Estambul', 'Bangkok', 'Seúl', 'Madrid']
@@ -75,6 +85,11 @@ const CATEGORIES_ES: Category[] = [
     id: 'nature',
     name: 'Naturaleza',
     words: ['Árbol', 'Flor', 'Río', 'Montaña', 'Mar', 'Playa', 'Bosque', 'Desierto', 'Volcán', 'Cueva', 'Lago', 'Cascada', 'Valle', 'Isla', 'Selva', 'Prado', 'Piedra', 'Arena', 'Tierra', 'Cielo']
+  },
+  {
+    id: 'hard_mode',
+    name: 'Modo Difícil (Abstracto)',
+    words: ['Nostalgia', 'Capitalismo', 'El color Azul', 'Martes', 'Libertad', 'Justicia', 'Amor', 'Tiempo', 'Silencio', 'Caos', 'Esperanza', 'Miedo', 'Sueño', 'Mentira', 'Verdad', 'Olvido', 'Destino', 'Suerte', 'Paz', 'Alma']
   }
 ];
 
@@ -83,6 +98,16 @@ const CATEGORIES_EN: Category[] = [
     id: 'animals',
     name: 'Animals',
     words: ['Lion', 'Elephant', 'Giraffe', 'Penguin', 'Dolphin', 'Eagle', 'Koala', 'Tiger', 'Panda Bear', 'Kangaroo', 'Wolf', 'Fox', 'Camel', 'Bat', 'Hippo', 'Gorilla', 'Snake', 'Crocodile', 'Owl', 'Cat']
+  },
+  {
+    id: 'films',
+    name: 'Films',
+    words: ['Titanic', 'Avatar', 'The Godfather', 'Pulp Fiction', 'Forrest Gump', 'The Lion King', 'The Matrix', 'Gladiator', 'Jurassic Park', 'E.T.', 'Star Wars', 'Indiana Jones', 'The Lord of the Rings', 'Harry Potter', 'Back to the Future', 'Terminator', 'Pirates of the Caribbean', 'Toy Story', 'Shrek', 'Frozen']
+  },
+  {
+    id: 'spanish_films',
+    name: 'Spanish Films',
+    words: ["Pan's Labyrinth", 'All About My Mother', 'The Sea Inside', 'Volver', 'Open Your Eyes', 'Thesis', 'The Orphanage', 'REC', 'Cell 211', 'The Impossible', 'Spanish Affair', 'El Bola', 'Alatriste', 'The Others', 'Torrente', 'Champions', 'Father There Is Only One', 'The Platform', 'Life Is Beautiful', 'The Invisible Guest']
   },
   {
     id: 'cities',
@@ -153,6 +178,11 @@ const CATEGORIES_EN: Category[] = [
     id: 'nature',
     name: 'Nature',
     words: ['Tree', 'Flower', 'River', 'Mountain', 'Sea', 'Beach', 'Forest', 'Desert', 'Volcano', 'Cave', 'Lake', 'Waterfall', 'Valley', 'Island', 'Jungle', 'Meadow', 'Stone', 'Sand', 'Earth', 'Sky']
+  },
+  {
+    id: 'hard_mode',
+    name: 'Hard Mode (Abstract)',
+    words: ['Nostalgia', 'Capitalism', 'The color Blue', 'Tuesday', 'Freedom', 'Justice', 'Love', 'Time', 'Silence', 'Chaos', 'Hope', 'Fear', 'Dream', 'Lie', 'Truth', 'Oblivion', 'Destiny', 'Luck', 'Peace', 'Soul']
   }
 ];
 

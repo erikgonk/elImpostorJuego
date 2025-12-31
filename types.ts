@@ -26,6 +26,9 @@ export interface Category {
 
 export interface GameSettings {
   impostorCount: number;
+  selectedCategory: string; // 'random' or category id
+  impostorKnowsOthers: boolean;
+  revealRoleAfterVote: boolean;
 }
 
 export interface GameState {
@@ -36,6 +39,8 @@ export interface GameState {
   currentCategoryName: string;
   winner: 'allies' | 'impostors' | null;
   eliminatedPlayerId: string | null;
+  startingPlayerId: string | null;
+  showStartingPlayer: boolean;
 }
 
 export type ScoreMap = Record<string, number>;
